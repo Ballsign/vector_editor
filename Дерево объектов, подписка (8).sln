@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31919.166
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Дерево объектов, подписка (8)", "Дерево объектов, подписка (8)\Дерево объектов, подписка (8).csproj", "{DA61B2F6-889E-4D34-9A50-247E46F9F241}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DA61B2F6-889E-4D34-9A50-247E46F9F241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA61B2F6-889E-4D34-9A50-247E46F9F241}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA61B2F6-889E-4D34-9A50-247E46F9F241}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA61B2F6-889E-4D34-9A50-247E46F9F241}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC599FE8-61EE-4E9F-977C-F487223C6314}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,229 @@
+using System.Diagnostics;
+using System.Reflection;
+
+namespace Дерево_объектов__подписка__8_;
+public partial class Form1 : Form {
+    Graphics g;
+    Pen pen;
+    Bitmap bitmap;
+    private string figure;
+    private int currentObject = 0;
+
+    Storage<Figure> figureStorage = new Storage<Figure>();
+    AbstractFigureFactory figureFactory;
+    public Form1() {
+        InitializeComponent();
+        bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+        g = Graphics.FromImage(bitmap);
+        pen = new Pen(Color.Black, 3);
+        Figure.endWindow = new Point(pictureBox1.Width, pictureBox1.Height);
+
+        typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, pictureBox1, new object[] { true });
+
+        figure = Tools.Line;
+        btColor.BackColor = Color.Black;
+
+        figureFactory = new ConcreteFigureFactory();
+    }
+
+    private bool mouseIsPressed = false;
+
+    bool resize = false;
+    bool moving = false;
+    private void pictureBox1_MouseDown(object sender, MouseEventArgs e) {
+        mouseIsPressed = true;
+
+        resize = false;
+        moving = false;
+        currentObject = 0;
+        Point p = e.Location;
+        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+            if (figureStorage.getIterator().resizeBoxCheck(p)) {
+                resize = true;
+                return;
+            }
+            currentObject++;
+        }
+        currentObject = 0;
+        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+            if (figureStorage.getIterator().clickOnArea(p)) {
+                moving = true;
+                return;
+
+            }
+            currentObject++;
+        }
+
+        if (!resize && !moving) {
+            if (figure == Tools.Cursor) {
+                for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+                    figureStorage.getIterator().click(p);
+                return;
+            }
+            figureStorage.first();
+            if (!figureStorage.eol())
+                figureStorage.getObject(0).setSelected(false);
+
+            figureStorage.push_front(figureFactory.createFigure(figure, p, p));
+
+            //if (figure != Tools.Cursor) {
+            figureStorage.getObject(0).setColor(pen.Color);
+
+        }
+    }
+    private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
+        if (!mouseIsPressed) return;
+
+        Point p = new Point(e.X, e.Y);
+        if (resize) {
+            figureStorage.getObject(currentObject).resizeFigure(p);
+        }
+
+        if (moving) {
+            figureStorage.getObject(currentObject).movingFigure(p);
+        }
+
+        if (!resize && !moving)
+            if (figure != Tools.Cursor)
+                figureStorage.getObject(0).setEndLocation(new Point(e.X, e.Y));
+
+    }
+    private void pictureBox1_MouseUp(object sender, MouseEventArgs e) {
+        mouseIsPressed = false;
+
+        figureStorage.first();
+        if (!figureStorage.eol())
+            if (figureStorage.getObject(0).isSlim()) {
+                figureStorage.remove(0);
+            }
+    }
+
+    private void pictureBox1_Paint(object sender, PaintEventArgs e) {
+        g.Clear(Color.White);
+        pictureBox1.Image = bitmap;
+        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+            figureStorage.getIterator().draw(g, pictureBox1, bitmap);
+            if (figureStorage.getIterator().getSelected()) {
+                figureStorage.getIterator().drawSelection(g, pictureBox1, bitmap);
+                figureStorage.getIterator().setColor(pen.Color);
+            }
+        }
+    }
+
+
+    private void Form1_ResizeEnd(object sender, EventArgs e) {
+        bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+        g = Graphics.FromImage(bitmap);
+
+        figureStorage.first();
+        if (!figureStorage.eol())
+            figureStorage.getObject(0).setWindow(new Point(pictureBox1.Width, pictureBox1.Height));
+        //for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+        //    figureStorage.getIterator().setWindow(new Point(pictureBox1.Width, pictureBox1.Height));
+
+    }
+
+    private void Form1_KeyDown(object sender, KeyEventArgs e) {
+        if (e.KeyCode == Keys.Delete) {
+            for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+                if (figureStorage.getIterator().getSelected())
+                    figureStorage.remove();
+            pictureBox1.Invalidate();
+        }
+    }
+    private void btCircle_Click(object sender, EventArgs e) {
+        removeSelected();
+        figure = Tools.Circle;
+    }
+
+    private void btLine_Click(object sender, EventArgs e) {
+        removeSelected();
+        figure = Tools.Line;
+    }
+
+    private void btRectangle_Click(object sender, EventArgs e) {
+        removeSelected();
+        figure = Tools.Rrectangle;
+
+    }
+
+    private void btTriangle_Click(object sender, EventArgs e) {
+        removeSelected();
+        figure = Tools.Triangle;
+    }
+
+    private void btColor_Click(object sender, EventArgs e) {
+
+        if (colorDialog1.ShowDialog() == DialogResult.OK) {
+            pen.Color = colorDialog1.Color;
+            btColor.BackColor = pen.Color;
+            for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+                if (figureStorage.getIterator().getSelected())
+                    figureStorage.getIterator().setColor(pen.Color);
+        }
+
+    }
+
+    private void btCursor_Click(object sender, EventArgs e) {
+        removeSelected();
+        figure = Tools.Cursor;
+    }
+    private void removeSelected() {
+        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+            figureStorage.getIterator().setSelected(false);
+    }
+
+    private void Form1_Load(object sender, EventArgs e) {
+    }
+
+    private void btSave_Click(object sender, EventArgs e) {
+        //figureStorage.save();
+        if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            figureStorage.save(saveFileDialog1.FileName);
+    }
+
+    private void btLoad_Click(object sender, EventArgs e) {
+        if (openFileDialog1.ShowDialog() == DialogResult.OK) {
+            figureStorage = figureFactory.load(openFileDialog1.FileName);
+            pictureBox1.Invalidate();
+        }
+/*        try {
+            figureStorage = figureFactory.load("C:\\Users\\zypok\\Documents\\My projects\\ООП\\Группировка и сохранени (7)\\Save File.txt");
+            pictureBox1.Invalidate();
+        }
+        catch { }*/
+
+    }
+    private void btGroup_Click(object sender, EventArgs e) {
+        Group group = new Group(new Point(0, 0), new Point(0, 0));
+        for (figureStorage.first();!figureStorage.eol(); figureStorage.next())
+            if (figureStorage.getIterator().getSelected()) {
+                group.groupStorage.push_front(figureStorage.getIterator());
+                figureStorage.remove();
+            }
+        group.selectionIntialize();
+        figureStorage.push_front(group);
+
+    }
+    private void btUngroup_Click(object sender, EventArgs e) {
+        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+            if (figureStorage.getIterator().getSelected() == true) {
+                if (figureStorage.getIterator() as Group != null) {
+                    Group group = figureStorage.getIterator() as Group;
+
+                    figureStorage.remove();
+
+                    for (group.groupStorage.first(); !group.groupStorage.eol(); group.groupStorage.next()) {
+                        figureStorage.push_front(group.groupStorage.getIterator());
+                        group.groupStorage.remove();
+                    }
+                }
+            }
+        }
+    }
+
+    private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e) {
+
+    }
+
+}
