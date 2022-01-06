@@ -11,6 +11,7 @@ public partial class Form1 : Form {
 
     Storage<Figure> figureStorage = new Storage<Figure>();
     AbstractFigureFactory figureFactory;
+    Observer observer;
     public Form1() {
         InitializeComponent();
         bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -24,6 +25,10 @@ public partial class Form1 : Form {
         btColor.BackColor = Color.Black;
 
         figureFactory = new ConcreteFigureFactory();
+
+        observer = new Observer();
+        observer.observer += new System.EventHandler(this.updateTreeview);
+        figureStorage.addObserver(observer);
     }
 
     private bool mouseIsPressed = false;
@@ -69,6 +74,8 @@ public partial class Form1 : Form {
             //if (figure != Tools.Cursor) {
             figureStorage.getObject(0).setColor(pen.Color);
 
+
+            
         }
     }
     private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
@@ -97,7 +104,6 @@ public partial class Form1 : Form {
                 figureStorage.remove(0);
             }
     }
-
     private void pictureBox1_Paint(object sender, PaintEventArgs e) {
         g.Clear(Color.White);
         pictureBox1.Image = bitmap;
@@ -109,8 +115,6 @@ public partial class Form1 : Form {
             }
         }
     }
-
-
     private void Form1_ResizeEnd(object sender, EventArgs e) {
         bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
         g = Graphics.FromImage(bitmap);
@@ -122,7 +126,6 @@ public partial class Form1 : Form {
         //    figureStorage.getIterator().setWindow(new Point(pictureBox1.Width, pictureBox1.Height));
 
     }
-
     private void Form1_KeyDown(object sender, KeyEventArgs e) {
         if (e.KeyCode == Keys.Delete) {
             for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
@@ -173,7 +176,24 @@ public partial class Form1 : Form {
             figureStorage.getIterator().setSelected(false);
     }
 
-    private void Form1_Load(object sender, EventArgs e) {
+    private void updateTreeview(object sender, EventArgs e) {
+        treeView1.Nodes.Clear();    
+
+        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+            treeView1.Nodes.Add(figureStorage.getIterator().name);
+
+        int i = 0;
+        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+            if (figureStorage.getIterator().getSelected()) {
+                treeView1.Nodes[i].BackColor = SystemColors.Highlight;
+                treeView1.Nodes[i].ForeColor = Color.White;
+            }
+            else {
+                treeView1.Nodes[i].BackColor = Color.White;
+                treeView1.Nodes[i].ForeColor = Color.Black;
+            }
+            i++;
+        }
     }
 
     private void btSave_Click(object sender, EventArgs e) {
@@ -181,12 +201,13 @@ public partial class Form1 : Form {
         if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             figureStorage.save(saveFileDialog1.FileName);
     }
-
     private void btLoad_Click(object sender, EventArgs e) {
         if (openFileDialog1.ShowDialog() == DialogResult.OK) {
             figureStorage = figureFactory.load(openFileDialog1.FileName);
+            figureStorage.addObserver(observer);
             pictureBox1.Invalidate();
         }
+        updateTreeview(sender, e);
 /*        try {
             figureStorage = figureFactory.load("C:\\Users\\zypok\\Documents\\My projects\\ООП\\Группировка и сохранени (7)\\Save File.txt");
             pictureBox1.Invalidate();
@@ -206,24 +227,32 @@ public partial class Form1 : Form {
 
     }
     private void btUngroup_Click(object sender, EventArgs e) {
+        Group group = null;
         for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
             if (figureStorage.getIterator().getSelected() == true) {
                 if (figureStorage.getIterator() as Group != null) {
-                    Group group = figureStorage.getIterator() as Group;
+                    group = figureStorage.getIterator() as Group;
 
                     figureStorage.remove();
-
-                    for (group.groupStorage.first(); !group.groupStorage.eol(); group.groupStorage.next()) {
-                        figureStorage.push_front(group.groupStorage.getIterator());
-                        group.groupStorage.remove();
-                    }
                 }
             }
         }
-    }
 
+        if (group != null)
+            for (group.groupStorage.first(); !group.groupStorage.eol(); group.groupStorage.next()) {
+                figureStorage.push_front(group.groupStorage.getIterator());
+                group.groupStorage.remove();
+            }
+    }
     private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e) {
 
     }
 
+    private void Form1_Load(object sender, EventArgs e) {
+    }
+
+    private void treeView1_AfterSelect(object sender, TreeViewEventArgs e) {
+        figureStorage.getObject(treeView1.SelectedNode.Index).setSelected(true);
+
+    }
 }

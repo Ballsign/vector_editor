@@ -70,7 +70,7 @@
   <data name="btCircle.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vgAADr4B6kKxwAAAAFlJREFUSEvtjTEOACAMAvv/T9cuLgZKjYmD9pKbIGB+gT7Z4rMTM6NWkC00vKpI
+        vAAADrwBlbxySQAAAFlJREFUSEvtjTEOACAMAvv/T9cuLgZKjYmD9pKbIGB+gT7Z4rMTM6NWkC00vKpI
         G2iQmUFTNKRk9AmU0SdQBk8CNMTMyNMADa4qdCNAw9MKtdYhfbLFKyfuA5JPCWhYKHkqAAAAAElFTkSu
         QmCC
 </value>
@@ -78,14 +78,14 @@
   <data name="btRectangle.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABkAAAAZCAYAAADE6YVjAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vQAADr0BR/uQrQAAAD9JREFUSEvtzTkOADAMAkH+/2nSujCFnaNwGIkSLfiAIyVDIwCOLfog0qH+jqTU
+        vAAADrwBlbxySQAAAD9JREFUSEvtzTkOADAMAkH+/2nSujCFnaNwGIkSLfiAIyVDIwCOLfog0qH+jqTU
         35GU+svI7qKhkVscKZkSIRdcoOh6IZiV3wAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="btTriangle.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wAAADsABataJCQAAAHFJREFUOE/VjYEKgEAIQ/3/nzaCjBWbLqjgHkicbq/ID7ClEf7/reQurHEYUyh0
+        vAAADrwBlbxySQAAAHFJREFUOE/VjYEKgEAIQ/3/nzaCjBWbLqjgHkicbq/ID7ClEf7/reQurHEYUyh0
         xf9LmbCmw5ayt0JeUVAStmNYUkTtEXrB4r3c3YpRyhjvx/cEC7I0ZFppR5e7bDDIwkiXlVIHlZfSp4Ms
         Kn2LVaSZG63gXujVZWBdAAAAAElFTkSuQmCC
 </value>
@@ -109,6 +109,6 @@
     <value>278, 17</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>48</value>
+    <value>40</value>
   </metadata>
 </root>

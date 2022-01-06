@@ -233,10 +233,9 @@ namespace Дерево_объектов__подписка__8_{
             borderCheck();
         }
 
-        protected string name;
+        public string name;
         public override string ToString() {
             return (name + " ; " + rectangle.X.ToString() + " ; " + rectangle.Y.ToString() + " ; " + (rectangle.X + rectangle.Width).ToString() + " ; " + (rectangle.Y + rectangle.Height).ToString() + " ; " + pen.Color.ToArgb().ToString());
-            //return (name + " ; " + startLocation.X.ToString() + " ; " + startLocation.Y.ToString() + " ; " + (endLocation.X).ToString() + " ; " + (endLocation.Y).ToString() + " ; " + pen.Color.ToArgb().ToString());
         }
 
         public Point getStartLocation() {
@@ -528,6 +527,7 @@ namespace Дерево_объектов__подписка__8_{
         public Group(Point p1, Point p2) : base(p1, p2) {
 
             groupStorage = new Storage<Figure>();
+            name = "Group";
         }
         public Storage<Figure> groupStorage;
         public override void draw(Graphics g, PictureBox pictureBox1, Bitmap bitmap) {

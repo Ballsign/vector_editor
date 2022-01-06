@@ -30,3 +30,63 @@
 *.exe
 *.out
 *.app
+*.v2
+*.v2
+*.v2
+.vs/Дерево объектов, подписка (8)/DesignTimeBuild/.dtbcache.v2
+*.v1
+*.pdb
+*.cache
+*.cache
+*.cache
+*.pdb
+*.resources
+Дерево объектов, подписка (8)/obj/Debug/net6.0-windows/Дерево объектов, подписка (8).pdb
+Дерево объектов, подписка (8)/obj/Debug/net6.0-windows/Дерево объектов, подписка (8).csproj.GenerateResource.cache
+Дерево объектов, подписка (8)/obj/
+### C++ template
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+.vs/Дерево объектов, подписка (8)/v17/.suo
+Дерево объектов, подписка (8)/bin/Debug/net6.0-windows/Дерево объектов, подписка (8).deps.json
+Дерево объектов, подписка (8)/bin/Debug/net6.0-windows/Дерево объектов, подписка (8).runtimeconfig.json
+*.v2
+.vs/Дерево объектов, подписка (8)/v17/.suo
+*.pdb
+*.cache
+*.pdb
+Дерево объектов, подписка (8)/bin/Debug/net6.0-windows/Дерево объектов, подписка (8).pdb
+.vs/Дерево объектов, подписка (8)/v17/.suo
+.vs/Дерево объектов, подписка (8)/v17/.futdcache.v1
+.vs/Дерево объектов, подписка (8)/project-colors.json
+.vs/Дерево объектов, подписка (8)/DesignTimeBuild/.dtbcache.v2

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Дерево_объектов__подписка__8_;
-	class Storage<T> {
+	class Storage<T> : IObservable {
 	private class Node {
 		public Node pNext;
 		public T data;
@@ -23,6 +23,8 @@ namespace Дерево_объектов__подписка__8_;
 	private bool cancelNext = false;
 	public Storage() {
 		size = 0;
+
+		observers = new List<IObserver>();
 	}
 
 	public T getObject(int index) {
@@ -67,6 +69,7 @@ namespace Дерево_объектов__подписка__8_;
 			tmp.pNext = new Node(data_);
 		}
 		size++;
+		notifyEveryone();
 	}
 	public void insert(T data_, int index) {
 		if (index > size || index < 0) return;
@@ -90,6 +93,7 @@ namespace Дерево_объектов__подписка__8_;
 		size--;
 		if (index == 0) {
 			arr = arr.pNext;
+			notifyEveryone();
 			//delete tmp;
 			return;
 		}
@@ -101,6 +105,7 @@ namespace Дерево_объектов__подписка__8_;
 
 		Node toDelete = previous.pNext;
 		previous.pNext = toDelete.pNext;
+		notifyEveryone();
 		//delete toDelete;
 	}
 	public void remove() {
@@ -118,6 +123,8 @@ namespace Дерево_объектов__подписка__8_;
 	public void push_front(T data_) {
 		arr = new Node(data_, arr);
 		size++;
+
+		notifyEveryone();
 	}
 
 	string path;
@@ -135,4 +142,23 @@ namespace Дерево_объектов__подписка__8_;
 		}
 		catch { }
 	}
+
+
+	private List<IObserver> observers;
+	public void addObserver(IObserver o) {
+		observers.Add(o);
+    }
+	public void removeObserver(IObserver o) {
+		observers.Remove(o);
+	}
+	public void notifyEveryone() {
+		foreach (IObserver observer in observers)
+			observer.update();
+    }
+}
+
+interface IObservable {
+	void addObserver(IObserver o);
+	void removeObserver(IObserver o);
+	void notifyEveryone();
 }

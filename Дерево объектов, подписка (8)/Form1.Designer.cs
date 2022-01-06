@@ -24,6 +24,9 @@
         /// </summary>
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Узел0");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Узел1");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Узел2");
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btLine = new System.Windows.Forms.Button();
             this.btCircle = new System.Windows.Forms.Button();
@@ -38,18 +41,19 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.btUngroup = new System.Windows.Forms.Button();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BackColor = System.Drawing.Color.White;
-            this.pictureBox1.Location = new System.Drawing.Point(4, 65);
+            this.pictureBox1.Location = new System.Drawing.Point(147, 65);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1073, 451);
+            this.pictureBox1.Size = new System.Drawing.Size(930, 451);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
@@ -167,11 +171,32 @@
             this.btUngroup.UseVisualStyleBackColor = true;
             this.btUngroup.Click += new System.EventHandler(this.btUngroup_Click);
             // 
+            // treeView1
+            // 
+            this.treeView1.Location = new System.Drawing.Point(12, 65);
+            this.treeView1.Name = "treeView1";
+            treeNode1.BackColor = System.Drawing.SystemColors.Highlight;
+            treeNode1.ForeColor = System.Drawing.Color.White;
+            treeNode1.Name = "Узел0";
+            treeNode1.Text = "Узел0";
+            treeNode2.Name = "Узел1";
+            treeNode2.Text = "Узел1";
+            treeNode3.Name = "Узел2";
+            treeNode3.Text = "Узел2";
+            this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
+            treeNode1,
+            treeNode2,
+            treeNode3});
+            this.treeView1.Size = new System.Drawing.Size(129, 451);
+            this.treeView1.TabIndex = 11;
+            this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1081, 519);
+            this.Controls.Add(this.treeView1);
             this.Controls.Add(this.btUngroup);
             this.Controls.Add(this.btGroup);
             this.Controls.Add(this.btLoad);
@@ -208,5 +233,6 @@
         private OpenFileDialog openFileDialog1;
         private SaveFileDialog saveFileDialog1;
         private Button btUngroup;
+        private TreeView treeView1;
     }
 }
