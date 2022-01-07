@@ -54,8 +54,6 @@ namespace Дерево_объектов__подписка__8_{
             borderCheck();
         }
         public bool getSelected() {
-            if ((Control.MouseButtons & MouseButtons.Left) != 0)
-                return false;
             return selected;
         }
         public virtual void drawSelection(Graphics g, PictureBox pictureBox, Bitmap bitmap) {

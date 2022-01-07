@@ -12,6 +12,7 @@ public partial class Form1 : Form {
     Storage<Figure> figureStorage = new Storage<Figure>();
     AbstractFigureFactory figureFactory;
     Observer observer;
+    Tree tree;
     public Form1() {
         InitializeComponent();
         bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -20,14 +21,16 @@ public partial class Form1 : Form {
         Figure.endWindow = new Point(pictureBox1.Width, pictureBox1.Height);
 
         typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, pictureBox1, new object[] { true });
+//        typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, treeView1, new object[] { true });
 
         figure = Tools.Line;
         btColor.BackColor = Color.Black;
 
         figureFactory = new ConcreteFigureFactory();
-
+        
+        tree = new Tree(figureStorage, treeView1);
         observer = new Observer();
-        observer.observer += new System.EventHandler(this.updateTreeview);
+        observer.observer += new System.EventHandler(tree.updateTreeview);
         figureStorage.addObserver(observer);
     }
 
@@ -103,13 +106,27 @@ public partial class Form1 : Form {
             if (figureStorage.getObject(0).isSlim()) {
                 figureStorage.remove(0);
             }
+
+        /*        int i = 0;
+                for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+                    if (figureStorage.getIterator().getSelected()) {
+                        treeView1.Nodes[i].BackColor = SystemColors.Highlight;
+                        treeView1.Nodes[i].ForeColor = Color.White;
+                    }
+                    else {
+                        treeView1.Nodes[i].BackColor = Color.White;
+                        treeView1.Nodes[i].ForeColor = Color.Black;
+                    }
+                    i++;
+                }*/
+        tree.updateTreeview(sender, e);
     }
     private void pictureBox1_Paint(object sender, PaintEventArgs e) {
         g.Clear(Color.White);
         pictureBox1.Image = bitmap;
         for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
             figureStorage.getIterator().draw(g, pictureBox1, bitmap);
-            if (figureStorage.getIterator().getSelected()) {
+            if (figureStorage.getIterator().getSelected() && ((Control.MouseButtons & MouseButtons.Left) == 0)) {
                 figureStorage.getIterator().drawSelection(g, pictureBox1, bitmap);
                 figureStorage.getIterator().setColor(pen.Color);
             }
@@ -133,7 +150,7 @@ public partial class Form1 : Form {
                     figureStorage.remove();
             pictureBox1.Invalidate();
         }
-    }
+    }//придумать
     private void btCircle_Click(object sender, EventArgs e) {
         removeSelected();
         figure = Tools.Circle;
@@ -177,23 +194,10 @@ public partial class Form1 : Form {
     }
 
     private void updateTreeview(object sender, EventArgs e) {
-        treeView1.Nodes.Clear();    
+/*        treeView1.Nodes.Clear();
 
         for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
-            treeView1.Nodes.Add(figureStorage.getIterator().name);
-
-        int i = 0;
-        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
-            if (figureStorage.getIterator().getSelected()) {
-                treeView1.Nodes[i].BackColor = SystemColors.Highlight;
-                treeView1.Nodes[i].ForeColor = Color.White;
-            }
-            else {
-                treeView1.Nodes[i].BackColor = Color.White;
-                treeView1.Nodes[i].ForeColor = Color.Black;
-            }
-            i++;
-        }
+            treeView1.Nodes.Add(figureStorage.getIterator().name);*/
     }
 
     private void btSave_Click(object sender, EventArgs e) {
@@ -205,9 +209,10 @@ public partial class Form1 : Form {
         if (openFileDialog1.ShowDialog() == DialogResult.OK) {
             figureStorage = figureFactory.load(openFileDialog1.FileName);
             figureStorage.addObserver(observer);
+            tree = new Tree(figureStorage, treeView1);
             pictureBox1.Invalidate();
         }
-        updateTreeview(sender, e);
+        tree.updateTreeview(sender, e);
 /*        try {
             figureStorage = figureFactory.load("C:\\Users\\zypok\\Documents\\My projects\\ООП\\Группировка и сохранени (7)\\Save File.txt");
             pictureBox1.Invalidate();
@@ -215,6 +220,7 @@ public partial class Form1 : Form {
         catch { }*/
 
     }
+
     private void btGroup_Click(object sender, EventArgs e) {
         Group group = new Group(new Point(0, 0), new Point(0, 0));
         for (figureStorage.first();!figureStorage.eol(); figureStorage.next())
@@ -244,15 +250,15 @@ public partial class Form1 : Form {
                 group.groupStorage.remove();
             }
     }
-    private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e) {
 
+    private void treeView1_AfterSelect(object sender, TreeViewEventArgs e) {
+        tree.tree_select(treeView1.SelectedNode);
+        tree.updateTreeview(sender, e);
     }
 
     private void Form1_Load(object sender, EventArgs e) {
     }
-
-    private void treeView1_AfterSelect(object sender, TreeViewEventArgs e) {
-        figureStorage.getObject(treeView1.SelectedNode.Index).setSelected(true);
+    private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e) {
 
     }
 }
