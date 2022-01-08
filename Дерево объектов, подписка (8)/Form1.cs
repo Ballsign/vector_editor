@@ -150,7 +150,7 @@ public partial class Form1 : Form {
                     figureStorage.remove();
             pictureBox1.Invalidate();
         }
-    }//придумать
+    }
     private void btCircle_Click(object sender, EventArgs e) {
         removeSelected();
         figure = Tools.Circle;
@@ -191,15 +191,9 @@ public partial class Form1 : Form {
     private void removeSelected() {
         for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
             figureStorage.getIterator().setSelected(false);
+
+        tree.updateTreeview(new object(), new EventArgs());
     }
-
-    private void updateTreeview(object sender, EventArgs e) {
-/*        treeView1.Nodes.Clear();
-
-        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
-            treeView1.Nodes.Add(figureStorage.getIterator().name);*/
-    }
-
     private void btSave_Click(object sender, EventArgs e) {
         //figureStorage.save();
         if (saveFileDialog1.ShowDialog() == DialogResult.OK)

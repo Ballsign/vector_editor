@@ -22,14 +22,13 @@ namespace Дерево_объектов__подписка__8_ {
                 proccesNode(tree.Nodes[0], figureStorage.getIterator(), figureStorage.getIterator());
 
             tree.ExpandAll();
-
             tree.EndUpdate();
         }
 
         void proccesNode(TreeNode tn, Figure o, Figure tag_) {
             TreeNode t = tn.Nodes.Add(o.name);
             t.Tag = tag_;
-            if (tag_.getSelected() /*|| tag_ != o*/) {
+            if (o.getSelected() && tag_ == o) {
                 t.BackColor = SystemColors.Highlight;
                 t.ForeColor = Color.White;
             }
@@ -37,7 +36,7 @@ namespace Дерево_объектов__подписка__8_ {
             if (o.name == "Group") {
                 Group group = o as Group;
                 for (group.groupStorage.first(); !group.groupStorage.eol(); group.groupStorage.next()) {
-                    proccesNode(t, group.groupStorage.getIterator(), group);
+                    proccesNode(t, group.groupStorage.getIterator(), tag_);
                 }
             }
 

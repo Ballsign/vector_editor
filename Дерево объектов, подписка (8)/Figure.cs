@@ -569,8 +569,11 @@ namespace Дерево_объектов__подписка__8_{
                     selected = true;
                     return selected;
                 }
-            selected = false;
-            return selected;
+            if (Control.ModifierKeys != Keys.Control) {
+                selected = false;
+                return false;
+            }
+            return false;
         }
 
 
