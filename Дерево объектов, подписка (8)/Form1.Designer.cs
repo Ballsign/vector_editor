@@ -42,6 +42,7 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.btUngroup = new System.Windows.Forms.Button();
             this.treeView1 = new System.Windows.Forms.TreeView();
+            this.chSticky = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -144,9 +145,9 @@
             // 
             // btGroup
             // 
-            this.btGroup.Location = new System.Drawing.Point(378, 7);
+            this.btGroup.Location = new System.Drawing.Point(412, 9);
             this.btGroup.Name = "btGroup";
-            this.btGroup.Size = new System.Drawing.Size(107, 27);
+            this.btGroup.Size = new System.Drawing.Size(107, 23);
             this.btGroup.TabIndex = 9;
             this.btGroup.Text = "Сгруппировать";
             this.btGroup.UseVisualStyleBackColor = true;
@@ -163,9 +164,9 @@
             // 
             // btUngroup
             // 
-            this.btUngroup.Location = new System.Drawing.Point(491, 7);
+            this.btUngroup.Location = new System.Drawing.Point(525, 9);
             this.btUngroup.Name = "btUngroup";
-            this.btUngroup.Size = new System.Drawing.Size(113, 27);
+            this.btUngroup.Size = new System.Drawing.Size(113, 23);
             this.btUngroup.TabIndex = 10;
             this.btUngroup.Text = "Разгруппировать";
             this.btUngroup.UseVisualStyleBackColor = true;
@@ -193,11 +194,24 @@
             this.treeView1.TabIndex = 11;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
             // 
+            // chSticky
+            // 
+            this.chSticky.AutoSize = true;
+            this.chSticky.Location = new System.Drawing.Point(748, 12);
+            this.chSticky.Name = "chSticky";
+            this.chSticky.Size = new System.Drawing.Size(68, 19);
+            this.chSticky.TabIndex = 12;
+            this.chSticky.Text = "Липкий";
+            this.chSticky.UseVisualStyleBackColor = true;
+            this.chSticky.CheckedChanged += new System.EventHandler(this.chSticky_CheckedChanged);
+            this.chSticky.Click += new System.EventHandler(this.chSticky_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1081, 519);
+            this.Controls.Add(this.chSticky);
             this.Controls.Add(this.treeView1);
             this.Controls.Add(this.btUngroup);
             this.Controls.Add(this.btGroup);
@@ -216,6 +230,7 @@
             this.ResizeEnd += new System.EventHandler(this.Form1_ResizeEnd);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -236,5 +251,6 @@
         private SaveFileDialog saveFileDialog1;
         private Button btUngroup;
         private TreeView treeView1;
+        private CheckBox chSticky;
     }
 }

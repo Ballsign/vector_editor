@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Reflection;
 
 namespace Дерево_объектов__подписка__8_;
@@ -64,8 +65,24 @@ public partial class Form1 : Form {
 
         if (!resize && !moving) {
             if (figure == Tools.Cursor) {
-                for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+                bool flag = false;
+                bool click = false;
+                for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) 
                     figureStorage.getIterator().click(p);
+
+
+                for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+                    if (figureStorage.getIterator().getSelected()) {
+                        if (!figureStorage.getIterator().getSticky())
+                            flag = true;
+                        click = true;
+                    }
+                if (click)
+                    if (flag) chSticky.Checked = false;
+                    else chSticky.Checked = true;
+                else
+                    chSticky.Checked = false;
+
                 return;
             }
             figureStorage.first();
@@ -77,8 +94,7 @@ public partial class Form1 : Form {
             //if (figure != Tools.Cursor) {
             figureStorage.getObject(0).setColor(pen.Color);
 
-
-            
+            chSticky.Checked = false;            
         }
     }
     private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
@@ -90,7 +106,14 @@ public partial class Form1 : Form {
         }
 
         if (moving) {
-            figureStorage.getObject(currentObject).movingFigure(p);
+
+            Figure currentFigure = figureStorage.getObject(currentObject);
+            currentFigure.movingFigure(p);
+            
+            if (currentFigure.getSticky())
+                for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+                    if ((figureStorage.getIterator() != currentFigure) && figureStorage.getIterator().stickyIntersection(currentFigure))
+                        Debug.WriteLine("intersection");
         }
 
         if (!resize && !moving)
@@ -106,7 +129,7 @@ public partial class Form1 : Form {
             if (figureStorage.getObject(0).isSlim()) {
                 figureStorage.remove(0);
             }
-
+        Debug.WriteLine("end");
         /*        int i = 0;
                 for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
                     if (figureStorage.getIterator().getSelected()) {
@@ -254,5 +277,18 @@ public partial class Form1 : Form {
     }
     private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e) {
 
+    }
+
+    /*    private void chSticky_CheckedChanged(object sender, EventArgs e) {
+
+        }*/
+    private void chSticky_CheckedChanged(object sender, EventArgs e) {
+
+    }
+
+    private void chSticky_Click(object sender, EventArgs e) {
+        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+            if (figureStorage.getIterator().getSelected())
+                figureStorage.getIterator().setSticky(chSticky.Checked);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ namespace Дерево_объектов__подписка__8_{
         protected float[] dashValue = new float[] { 1.5f, 1.5f };
         protected int resizeBox;
         private int minSize = 10;
+        public bool sticky = false;
 
         protected double section(Point a, Point b) {
             return Math.Sqrt((b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y));
@@ -37,6 +39,8 @@ namespace Дерево_объектов__подписка__8_{
             deltaPoint = new Point(rectangle.X - 4, rectangle.Y - 4);
 
             pen = new Pen(Color.Black, 3);
+
+            region = new Region();
         }
 
         abstract public void draw(Graphics g, PictureBox pictureBox1, Bitmap bitmap);
@@ -106,8 +110,7 @@ namespace Дерево_объектов__подписка__8_{
 
         }
         public virtual bool resizeBoxCheck(Point p) {
-            /*if (selected) */
-            {
+            if (selected) {
                 startLocation.X = rectangle.X;
                 startLocation.Y = rectangle.Y;
                 endLocation.X = rectangle.X + rectangle.Width;
@@ -184,15 +187,25 @@ namespace Дерево_объектов__подписка__8_{
 
         public Point movingPoint;
         public virtual bool clickOnArea(Point p) {
+            region = new Region(getGrapicsPath());
+
             if (selected) {
                 movingPoint.X = p.X;
                 movingPoint.Y = p.Y;
                 moving = true;
+
                 return rectangle.Contains(p) ? true : false;
             }
             moving = false;
             return false;
         }
+
+        protected virtual GraphicsPath getGrapicsPath() {
+            GraphicsPath gr = new GraphicsPath();
+            gr.AddRectangle(rectangle);
+            return gr;
+        }
+
         public virtual void movingFigure(Point p) {
             /*if (moving) */
             {
@@ -261,6 +274,44 @@ namespace Дерево_объектов__подписка__8_{
         public virtual void recursiveMovingPointSet(Point p) {
             movingPoint = p;
         }
+
+        protected bool lineIntersection(Point p1, Point p2, Point p3, Point p4) {
+            Point s1 = new Point(p2.X - p1.X, p2.Y - p1.Y);
+            Point s2 = new Point(p4.X - p3.X, p4.Y - p3.Y);
+
+            float s, t;
+            s = (-s1.Y * (p1.X - p3.X) + s1.X * (p1.Y - p3.Y)) / (-s2.X * s1.Y + s1.X * s2.Y);
+            t = (s2.X * (p1.Y - p3.Y) - s2.Y * (p1.X - p3.X)) / (-s2.X * s1.Y + s1.X * s2.Y);
+
+            if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+                return true;
+            }
+
+            return false;
+        }
+
+        Region region;
+
+        public bool stickyIntersection(Figure other) {
+
+/*            PictureBox pictureBox = new PictureBox();
+            pictureBox.Width = endWindow.X;
+            pictureBox.Height = endWindow.Y;
+            Bitmap bitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
+            Graphics g = Graphics.FromImage(bitmap);
+
+            other.draw(g, pictureBox, bitmap);*/
+
+/*            region = new Region(getGrapicsPath());*/
+
+            return region.IsVisible(other.rectangle/*, g*/);
+        }
+        public void setSticky(bool flag) {
+            sticky = flag;
+        }
+        public bool getSticky() {
+            return sticky;
+        }
     }
 
     class Line : Figure {
@@ -271,7 +322,6 @@ namespace Дерево_объектов__подписка__8_{
             rectangle.Location = p1;
             rectangle.Width = p2.X - p1.X;
             rectangle.Height = p2.Y - p1.Y;
-
         }
 
         public override void draw(Graphics g, PictureBox pictureBox1, Bitmap bitmap) {
@@ -378,7 +428,6 @@ namespace Дерево_объектов__подписка__8_{
         public override bool isSlim() {
             return false;
         }
-
         public override void borderCheck() {
             rectangleSelection = new Rectangle(new Point(Math.Min(rectangle.X, rectangle.X + rectangle.Width), Math.Min(rectangle.Y, rectangle.Y + rectangle.Height)), new Size(Math.Abs(rectangle.Width), Math.Abs(rectangle.Height)));
 
@@ -431,6 +480,11 @@ namespace Дерево_объектов__подписка__8_{
             return (name + " ; " + rectangle.X.ToString() + " ; " + rectangle.Y.ToString() + " ; " + (rectangle.X + rectangle.Width).ToString() + " ; " + (rectangle.Y + rectangle.Height).ToString() + " ; " + pen.Color.ToArgb().ToString());
         }
 
+        protected override GraphicsPath getGrapicsPath() {
+            GraphicsPath gr = new GraphicsPath();
+            gr.AddLine(rectangle.Location, new Point(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height));
+            return gr;
+        }
     }
 
     class Circle : Figure {
@@ -456,7 +510,12 @@ namespace Дерево_объектов__подписка__8_{
                 return false;
             }
             return false;
+        }
 
+        protected override GraphicsPath getGrapicsPath() {
+            GraphicsPath gr = new GraphicsPath();
+            gr.AddEllipse(rectangle);
+            return gr;
         }
     }
 
@@ -518,6 +577,13 @@ namespace Дерево_объектов__подписка__8_{
                 return false;
             }
             return false;
+        }
+        protected override GraphicsPath getGrapicsPath() {
+            GraphicsPath gr = new GraphicsPath();
+            gr.AddLine(new Point(rectangle.X, rectangle.Y + rectangle.Height), new Point(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height));
+            gr.AddLine(new Point(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height), new Point(rectangle.X + (rectangle.Width / 2), rectangle.Y));
+            gr.AddLine(new Point(rectangle.X, rectangle.Y + rectangle.Height), new Point(rectangle.X + (rectangle.Width / 2), rectangle.Y));
+            return gr;
         }
     }
 
