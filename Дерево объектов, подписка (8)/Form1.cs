@@ -31,7 +31,7 @@ public partial class Form1 : Form {
         
         tree = new Tree(figureStorage, treeView1);
         observer = new Observer();
-        observer.observer += new System.EventHandler(tree.updateTreeview);
+        observer.observer += new MouseEventHandler/*new System.EventHandler*/(tree.updateTreeview);
         figureStorage.addObserver(observer);
     }
 
@@ -53,6 +53,10 @@ public partial class Form1 : Form {
             }
             currentObject++;
         }
+        for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+            figureStorage.getIterator().recursiveMovingPointSet(p);
+        }
+
         currentObject = 0;
         for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
             if (figureStorage.getIterator().clickOnArea(p)) {
@@ -109,11 +113,20 @@ public partial class Form1 : Form {
 
             Figure currentFigure = figureStorage.getObject(currentObject);
             currentFigure.movingFigure(p);
-            
-            if (currentFigure.getSticky())
-                for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
-                    if ((figureStorage.getIterator() != currentFigure) && figureStorage.getIterator().stickyIntersection(currentFigure))
-                        Debug.WriteLine("intersection");
+
+            if (currentFigure.getSticky()) {
+                for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+                    if ((figureStorage.getIterator() != currentFigure) && !figureStorage.getIterator().getSticked())
+                        if (figureStorage.getIterator().stickyIntersection(currentFigure)) {
+                            Observer o = new Observer();
+                            o.observer += new MouseEventHandler(figureStorage.getIterator().movingHandler);
+                            currentFigure.addObserver(o);
+                            figureStorage.getIterator().movingPoint = currentFigure.movingPoint;
+                            figureStorage.getIterator().setMoving(true);
+                        }
+                }
+                currentFigure.notifyEveryone(e);
+            }
         }
 
         if (!resize && !moving)
@@ -130,18 +143,7 @@ public partial class Form1 : Form {
                 figureStorage.remove(0);
             }
         Debug.WriteLine("end");
-        /*        int i = 0;
-                for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
-                    if (figureStorage.getIterator().getSelected()) {
-                        treeView1.Nodes[i].BackColor = SystemColors.Highlight;
-                        treeView1.Nodes[i].ForeColor = Color.White;
-                    }
-                    else {
-                        treeView1.Nodes[i].BackColor = Color.White;
-                        treeView1.Nodes[i].ForeColor = Color.Black;
-                    }
-                    i++;
-                }*/
+
         tree.updateTreeview(sender, e);
     }
     private void pictureBox1_Paint(object sender, PaintEventArgs e) {
@@ -162,9 +164,6 @@ public partial class Form1 : Form {
         figureStorage.first();
         if (!figureStorage.eol())
             figureStorage.getObject(0).setWindow(new Point(pictureBox1.Width, pictureBox1.Height));
-        //for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
-        //    figureStorage.getIterator().setWindow(new Point(pictureBox1.Width, pictureBox1.Height));
-
     }
     private void Form1_KeyDown(object sender, KeyEventArgs e) {
         if (e.KeyCode == Keys.Delete) {
@@ -176,22 +175,26 @@ public partial class Form1 : Form {
     }
     private void btCircle_Click(object sender, EventArgs e) {
         removeSelected();
+        chSticky.Checked = false;
         figure = Tools.Circle;
     }
 
     private void btLine_Click(object sender, EventArgs e) {
         removeSelected();
+        chSticky.Checked = false;
         figure = Tools.Line;
     }
 
     private void btRectangle_Click(object sender, EventArgs e) {
         removeSelected();
+        chSticky.Checked = false;
         figure = Tools.Rrectangle;
 
     }
 
     private void btTriangle_Click(object sender, EventArgs e) {
         removeSelected();
+        chSticky.Checked = false;
         figure = Tools.Triangle;
     }
 
@@ -209,6 +212,7 @@ public partial class Form1 : Form {
 
     private void btCursor_Click(object sender, EventArgs e) {
         removeSelected();
+        chSticky.Checked = false;
         figure = Tools.Cursor;
     }
     private void removeSelected() {
@@ -230,12 +234,6 @@ public partial class Form1 : Form {
             pictureBox1.Invalidate();
         }
         tree.updateTreeview(sender, e);
-/*        try {
-            figureStorage = figureFactory.load("C:\\Users\\zypok\\Documents\\My projects\\ООП\\Группировка и сохранени (7)\\Save File.txt");
-            pictureBox1.Invalidate();
-        }
-        catch { }*/
-
     }
 
     private void btGroup_Click(object sender, EventArgs e) {
@@ -250,22 +248,25 @@ public partial class Form1 : Form {
 
     }
     private void btUngroup_Click(object sender, EventArgs e) {
-        Group group = null;
+        Storage<Group> group = new Storage<Group>();
         for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
             if (figureStorage.getIterator().getSelected() == true) {
                 if (figureStorage.getIterator() as Group != null) {
-                    group = figureStorage.getIterator() as Group;
+                    group.push_front(figureStorage.getIterator() as Group);
 
                     figureStorage.remove();
                 }
             }
         }
 
-        if (group != null)
-            for (group.groupStorage.first(); !group.groupStorage.eol(); group.groupStorage.next()) {
-                figureStorage.push_front(group.groupStorage.getIterator());
-                group.groupStorage.remove();
+        for (group.first(); !group.eol(); group.next()) {
+            for (group.getIterator().groupStorage.first(); !group.getIterator().groupStorage.eol(); group.getIterator().groupStorage.next()) {
+                figureStorage.push_front(group.getIterator().groupStorage.getIterator());
+                figureStorage.getObject(0).setSelected(true);
+                group.getIterator().groupStorage.remove();
             }
+            group.remove();
+        }
     }
 
     private void treeView1_AfterSelect(object sender, TreeViewEventArgs e) {
@@ -279,9 +280,6 @@ public partial class Form1 : Form {
 
     }
 
-    /*    private void chSticky_CheckedChanged(object sender, EventArgs e) {
-
-        }*/
     private void chSticky_CheckedChanged(object sender, EventArgs e) {
 
     }

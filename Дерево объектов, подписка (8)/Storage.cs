@@ -69,7 +69,7 @@ namespace Дерево_объектов__подписка__8_;
 			tmp.pNext = new Node(data_);
 		}
 		size++;
-		notifyEveryone();
+		notifyEveryone(null);
 	}
 	public void insert(T data_, int index) {
 		if (index > size || index < 0) return;
@@ -86,14 +86,14 @@ namespace Дерево_объектов__подписка__8_;
 		previous.pNext = newNode;
 
 		size++;
-
+		notifyEveryone(null);
 	}
 	public void remove(int index) {
 		if (index > size || index < 0) return;
 		size--;
 		if (index == 0) {
 			arr = arr.pNext;
-			notifyEveryone();
+			notifyEveryone(null);
 			//delete tmp;
 			return;
 		}
@@ -105,7 +105,7 @@ namespace Дерево_объектов__подписка__8_;
 
 		Node toDelete = previous.pNext;
 		previous.pNext = toDelete.pNext;
-		notifyEveryone();
+		notifyEveryone(null);
 		//delete toDelete;
 	}
 	public void remove() {
@@ -124,13 +124,13 @@ namespace Дерево_объектов__подписка__8_;
 		arr = new Node(data_, arr);
 		size++;
 
-		notifyEveryone();
+		notifyEveryone(null);
 	}
 
 	string path;
 	public void save(string path) {
 		try {
-			using (StreamWriter sw = new StreamWriter(path, false))//try
+			using (StreamWriter sw = new StreamWriter(path, false))
 				sw.Write("");
 
 			Node tmp = arr;
@@ -151,14 +151,12 @@ namespace Дерево_объектов__подписка__8_;
 	public void removeObserver(IObserver o) {
 		observers.Remove(o);
 	}
-	public void notifyEveryone() {
+	public void notifyEveryone(MouseEventArgs e) {
 		foreach (IObserver observer in observers)
-			observer.update();
+			observer.update(null);
+    }
+	public bool isEmpty() {
+		return observers.Count == 0;
     }
 }
 
-interface IObservable {
-	void addObserver(IObserver o);
-	void removeObserver(IObserver o);
-	void notifyEveryone();
-}

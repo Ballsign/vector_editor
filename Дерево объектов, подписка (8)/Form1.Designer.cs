@@ -24,9 +24,6 @@
         /// </summary>
         private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Узел0");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Узел1");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Узел2");
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btLine = new System.Windows.Forms.Button();
             this.btCircle = new System.Windows.Forms.Button();
@@ -178,18 +175,6 @@
             | System.Windows.Forms.AnchorStyles.Left)));
             this.treeView1.Location = new System.Drawing.Point(12, 65);
             this.treeView1.Name = "treeView1";
-            treeNode1.BackColor = System.Drawing.SystemColors.Highlight;
-            treeNode1.ForeColor = System.Drawing.Color.White;
-            treeNode1.Name = "Узел0";
-            treeNode1.Text = "Узел0";
-            treeNode2.Name = "Узел1";
-            treeNode2.Text = "Узел1";
-            treeNode3.Name = "Узел2";
-            treeNode3.Text = "Узел2";
-            this.treeView1.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3});
             this.treeView1.Size = new System.Drawing.Size(129, 451);
             this.treeView1.TabIndex = 11;
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
