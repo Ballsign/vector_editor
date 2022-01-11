@@ -12,8 +12,8 @@ public partial class Form1 : Form {
 
     Storage<Figure> figureStorage = new Storage<Figure>();
     AbstractFigureFactory figureFactory;
-    Observer observer;
     Tree tree;
+    Observer observer;
     public Form1() {
         InitializeComponent();
         bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
@@ -22,8 +22,6 @@ public partial class Form1 : Form {
         Figure.endWindow = new Point(pictureBox1.Width, pictureBox1.Height);
 
         typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, pictureBox1, new object[] { true });
-//        typeof(Panel).InvokeMember("DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null, treeView1, new object[] { true });
-
         figure = Tools.Line;
         btColor.BackColor = Color.Black;
 
@@ -31,7 +29,7 @@ public partial class Form1 : Form {
         
         tree = new Tree(figureStorage, treeView1);
         observer = new Observer();
-        observer.observer += new MouseEventHandler/*new System.EventHandler*/(tree.updateTreeview);
+        observer.observer += new MouseEventHandler(tree.updateTreeview);
         figureStorage.addObserver(observer);
     }
 
@@ -228,9 +226,12 @@ public partial class Form1 : Form {
     }
     private void btLoad_Click(object sender, EventArgs e) {
         if (openFileDialog1.ShowDialog() == DialogResult.OK) {
+            //figureStorage.removeObserver(observer);
             figureStorage = figureFactory.load(openFileDialog1.FileName);
-            figureStorage.addObserver(observer);
             tree = new Tree(figureStorage, treeView1);
+            observer.observer = new MouseEventHandler(tree.updateTreeview);
+            figureStorage.addObserver(observer);
+
             pictureBox1.Invalidate();
         }
         tree.updateTreeview(sender, e);

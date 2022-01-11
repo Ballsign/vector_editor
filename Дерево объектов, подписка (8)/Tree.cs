@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -18,8 +19,10 @@ namespace Дерево_объектов__подписка__8_ {
             tree.Nodes.Clear();
             tree.Nodes.Add("Storage");
 
-            for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+            for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
                 proccesNode(tree.Nodes[0], figureStorage.getIterator(), figureStorage.getIterator());
+                Debug.WriteLine(figureStorage.getIterator().ToString());
+            }
 
             tree.ExpandAll();
             tree.EndUpdate();

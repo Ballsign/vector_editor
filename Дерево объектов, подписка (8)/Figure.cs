@@ -764,6 +764,42 @@ namespace Дерево_объектов__подписка__8_{
                 groupStorage.getIterator().setColor(color);
         }
 
+        public override string ToString() {
+            string str = "Group ; { ; \n";
+            string split = " ; ";
+
+
+
+            str += recursiveToString();
+
+            str += "}";
+            return str;
+        }
+        private string recursiveToString() {
+            /*int k = k_; string split = " ; ";
+            for (g.groupStorage.first(); !g.groupStorage.eol(); g.groupStorage.next()) {
+                if (g.groupStorage.getIterator().name == "Group") {
+                    for (int i = 0; i <= k; i++)
+                        str += split;
+                    str += g.name + "\n";
+                    k++;
+                    recursiveToString(str, g.groupStorage.getIterator() as Group, k);
+                }
+                else {
+                    for (int i = 0; i <= k; i++)
+                        str += split;
+                    str += g.groupStorage.getIterator().ToString() + "\n";
+
+                }
+            }*/
+            string str = "";
+            for (groupStorage.first(); !groupStorage.eol(); groupStorage.next()) {
+                str += groupStorage.getIterator().ToString() + "\n";
+            }
+            return str;
+
+        }
+
         public override GraphicsPath getGrapicsPath() {
             GraphicsPath gr = new GraphicsPath();
             for (groupStorage.first(); !groupStorage.eol(); groupStorage.next())
