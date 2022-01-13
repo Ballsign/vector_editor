@@ -21,10 +21,12 @@ namespace Дерево_объектов__подписка__8_;
 	private Node iteratorElement;
 	private Node previousIteratorElement;
 	private bool cancelNext = false;
+	private Stack<Node> stack;
 	public Storage() {
 		size = 0;
 
 		observers = new List<IObserver>();
+		stack = new Stack<Node>();
 	}
 
 	public T getObject(int index) {
@@ -38,12 +40,17 @@ namespace Дерево_объектов__подписка__8_;
 		return size;
     }
 	public void first() {
+		stack.Push(iteratorElement);
+		stack.Push(previousIteratorElement);
 		previousIteratorElement = arr;
 		iteratorElement = arr;
 	}
 	public bool eol() {
-		if (iteratorElement == null)
+		if (iteratorElement == null) {
+			previousIteratorElement = stack.Pop();
+			iteratorElement = stack.Pop();
 			return true;
+		}
 		return false;
 	}
 	public void next() {
@@ -148,9 +155,15 @@ namespace Дерево_объектов__подписка__8_;
 	public void addObserver(IObserver o) {
 		observers.Add(o);
     }
+	public void removeObservers() {
+		for (int i = 0; i < observers.Count; i++) {
+			observers.RemoveAt(i);
+			i--;
+		}
+	}
 	public void removeObserver(IObserver o) {
 		observers.Remove(o);
-	}
+    }
 	public void notifyEveryone(MouseEventArgs e) {
 		foreach (IObserver observer in observers)
 			observer.update(null);

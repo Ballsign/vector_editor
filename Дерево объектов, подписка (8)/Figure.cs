@@ -23,6 +23,10 @@ namespace Дерево_объектов__подписка__8_{
         protected int resizeBox;
         private int minSize = 10;
         public bool sticky = false;
+        private List<Figure> observeringFigures;
+        public string name;
+        Region region;
+        private List<IObserver> observers;
 
         protected double section(Point a, Point b) {
             return Math.Sqrt((b.X - a.X) * (b.X - a.X) + (b.Y - a.Y) * (b.Y - a.Y));
@@ -42,6 +46,7 @@ namespace Дерево_объектов__подписка__8_{
 
             region = new Region();
             observers = new List<IObserver>();
+            observeringFigures = new List<Figure>();
         }
 
         abstract public void draw(Graphics g, PictureBox pictureBox1, Bitmap bitmap);
@@ -203,24 +208,28 @@ namespace Дерево_объектов__подписка__8_{
         }
 
 
-        public virtual void movingFigure(Point p) {
-            /*if (moving) */
-            {
-                rectangle.X += p.X - movingPoint.X;
-                rectangle.Y += p.Y - movingPoint.Y;
-
-                startLocation.X = rectangle.X;
-                startLocation.Y = rectangle.Y;
-                endLocation.X = rectangle.X + rectangle.Width;
-                endLocation.Y = rectangle.Y + rectangle.Height;
-
-
-                movingPoint.X = p.X;
-                movingPoint.Y = p.Y;
-
-                borderCheck();
-                /*notifyEveryone(new MouseEventArgs(MouseButtons.Left, 0, p.X, p.Y, 0));*/
+        public void movingFigure(Point p) {
+            if (selected){
+                notifyEveryone(new MouseEventArgs(MouseButtons.Left, 0, p.X, p.Y, 0));
+                forceMoving(p);
             }
+        }
+        public virtual void forceMoving(Point p) {
+            rectangle.X += p.X - movingPoint.X;
+            rectangle.Y += p.Y - movingPoint.Y;
+
+            startLocation.X = rectangle.X;
+            startLocation.Y = rectangle.Y;
+            endLocation.X = rectangle.X + rectangle.Width;
+            endLocation.Y = rectangle.Y + rectangle.Height;
+
+
+            movingPoint.X = p.X;
+            movingPoint.Y = p.Y;
+
+            borderCheck();
+/*            notifyEveryone(new MouseEventArgs(MouseButtons.Left, 0, p.X, p.Y, 0));
+*/
         }
         public virtual void setColor(Color color) {
             pen.Color = color;
@@ -242,7 +251,6 @@ namespace Дерево_объектов__подписка__8_{
             borderCheck();
         }
 
-        public string name;
         public override string ToString() {
             return (name + " ; " + rectangle.X.ToString() + " ; " + rectangle.Y.ToString() + " ; " + (rectangle.X + rectangle.Width).ToString() + " ; " + (rectangle.Y + rectangle.Height).ToString() + " ; " + pen.Color.ToArgb().ToString());
         }
@@ -250,45 +258,24 @@ namespace Дерево_объектов__подписка__8_{
         public Point getStartLocation() {
             return startLocation;
         }
-
         public Point getEndRectangle() {
             return new Point(rectangle.X + rectangle.Width, rectangle.Y + rectangle.Height);
         }
-
         protected virtual void resizeGroup(Point p) {
 
         }
-
         public virtual void movingInGroup(Point p) {
             rectangle.X = p.X;
             rectangle.Y = p.Y;
         }
-
         public virtual void resizeInResizeGroup(Size size) {
             rectangle.Width = size.Width;
             rectangle.Height = size.Height;
         }
-
         public virtual void recursiveMovingPointSet(Point p) {
             movingPoint = p;
         }
 
-        protected bool lineIntersection(Point p1, Point p2, Point p3, Point p4) {
-            Point s1 = new Point(p2.X - p1.X, p2.Y - p1.Y);
-            Point s2 = new Point(p4.X - p3.X, p4.Y - p3.Y);
-
-            float s, t;
-            s = (-s1.Y * (p1.X - p3.X) + s1.X * (p1.Y - p3.Y)) / (-s2.X * s1.Y + s1.X * s2.Y);
-            t = (s2.X * (p1.Y - p3.Y) - s2.Y * (p1.X - p3.X)) / (-s2.X * s1.Y + s1.X * s2.Y);
-
-            if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
-                return true;
-            }
-
-            return false;
-        }
-
-        Region region;
         public virtual GraphicsPath getGrapicsPath() {
             GraphicsPath gr = new GraphicsPath();
             gr.AddRectangle(rectangle);
@@ -310,8 +297,7 @@ namespace Дерево_объектов__подписка__8_{
                 return true;
             return false;*/
             region = new Region(getGrapicsPath());
-            sticked = region.IsVisible(other.rectangle/*, g*/);
-            return sticked;
+            return region.IsVisible(other.rectangle/*, g*/);
         }
         public void setSticky(bool flag) {
             sticky = flag;
@@ -320,9 +306,14 @@ namespace Дерево_объектов__подписка__8_{
             return sticky;
         }
 
-        private List<IObserver> observers;
         public void addObserver(IObserver o) {
             observers.Add(o);
+        }
+        public void removeObservers() {
+            for (int i = 0; i < observers.Count; i++) {
+                observers.RemoveAt(i);
+                i--;
+            }
         }
         public void removeObserver(IObserver o) {
             observers.Remove(o);
@@ -335,12 +326,25 @@ namespace Дерево_объектов__подписка__8_{
         public bool isEmpty() {
             return observers.Count == 0;
         }
-        bool sticked = false;
-        public bool getSticked() { return sticked; }
-        public void setSticked(bool flag) { sticked = flag; }
+
         public void movingHandler(object sender, MouseEventArgs e) {
-            
-            movingFigure(e.Location);
+            forceMoving(e.Location);
+        }
+
+        public void addObserverFigure(Figure f) {
+            observeringFigures.Add(f);
+        }
+        public void removeObservingFigure(Figure f) {
+            observeringFigures.Remove(f);
+        }
+        public bool containsObservingFigure(Figure f) {
+            return observeringFigures.Contains(f);
+        }
+        public void removeAllObserveringFigures() {
+            for (int i = 0; i < observeringFigures.Count; i++) {
+                observeringFigures.RemoveAt(i);
+                i--;
+            }
         }
     }
 
@@ -692,8 +696,16 @@ namespace Дерево_объектов__подписка__8_{
 
             return base.clickOnArea(p);
         }
-        public override void movingFigure(Point p) {
+        /*public override void movingFigure(Point p) {
             base.movingFigure(p);
+            int i = 0;
+            for (groupStorage.first(); !groupStorage.eol(); groupStorage.next()) {
+                groupStorage.getIterator().movingInGroup(new Point(rectangle.X + deltaPos[i].X, rectangle.Y + deltaPos[i].Y));
+                i++;
+            }
+        }*/
+        public override void forceMoving(Point p) {
+            base.forceMoving(p);
             int i = 0;
             for (groupStorage.first(); !groupStorage.eol(); groupStorage.next()) {
                 groupStorage.getIterator().movingInGroup(new Point(rectangle.X + deltaPos[i].X, rectangle.Y + deltaPos[i].Y));

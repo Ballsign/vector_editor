@@ -21,6 +21,7 @@ namespace Дерево_объектов__подписка__8_ {
     interface IObservable {
         void addObserver(IObserver o);
         void removeObserver(IObserver o);
+        void removeObservers();
         void notifyEveryone(MouseEventArgs e);
         bool isEmpty();
     }

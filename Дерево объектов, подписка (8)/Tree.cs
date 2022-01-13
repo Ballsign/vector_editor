@@ -21,7 +21,6 @@ namespace Дерево_объектов__подписка__8_ {
 
             for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
                 proccesNode(tree.Nodes[0], figureStorage.getIterator(), figureStorage.getIterator());
-                Debug.WriteLine(figureStorage.getIterator().ToString());
             }
 
             tree.ExpandAll();

@@ -59,7 +59,7 @@ public partial class Form1 : Form {
         for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
             if (figureStorage.getIterator().clickOnArea(p)) {
                 moving = true;
-                return;
+/*                return;*/
 
             }
             currentObject++;
@@ -108,22 +108,24 @@ public partial class Form1 : Form {
         }
 
         if (moving) {
+            for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+                Figure currentFigure = figureStorage.getIterator();
+                currentFigure.movingFigure(p);
+                if (currentFigure.getSticky()) {
+                    for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+                        if ((figureStorage.getIterator() != currentFigure) && !currentFigure.containsObservingFigure(figureStorage.getIterator())) {
+                            if (figureStorage.getIterator().stickyIntersection(currentFigure)) {
+                                Observer o = new Observer();
+                                o.observer += new MouseEventHandler(figureStorage.getIterator().movingHandler);
+                                currentFigure.addObserver(o);
+                                currentFigure.addObserverFigure(figureStorage.getIterator());
 
-            Figure currentFigure = figureStorage.getObject(currentObject);
-            currentFigure.movingFigure(p);
-
-            if (currentFigure.getSticky()) {
-                for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
-                    if ((figureStorage.getIterator() != currentFigure) && !figureStorage.getIterator().getSticked())
-                        if (figureStorage.getIterator().stickyIntersection(currentFigure)) {
-                            Observer o = new Observer();
-                            o.observer += new MouseEventHandler(figureStorage.getIterator().movingHandler);
-                            currentFigure.addObserver(o);
-                            figureStorage.getIterator().movingPoint = currentFigure.movingPoint;
-                            figureStorage.getIterator().setMoving(true);
+                                figureStorage.getIterator().movingPoint = currentFigure.movingPoint;
+                                figureStorage.getIterator().setMoving(true);
+                            }
                         }
+                    }
                 }
-                currentFigure.notifyEveryone(e);
             }
         }
 
@@ -140,8 +142,6 @@ public partial class Form1 : Form {
             if (figureStorage.getObject(0).isSlim()) {
                 figureStorage.remove(0);
             }
-        Debug.WriteLine("end");
-
         tree.updateTreeview(sender, e);
     }
     private void pictureBox1_Paint(object sender, PaintEventArgs e) {
@@ -163,14 +163,7 @@ public partial class Form1 : Form {
         if (!figureStorage.eol())
             figureStorage.getObject(0).setWindow(new Point(pictureBox1.Width, pictureBox1.Height));
     }
-    private void Form1_KeyDown(object sender, KeyEventArgs e) {
-        if (e.KeyCode == Keys.Delete) {
-            for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
-                if (figureStorage.getIterator().getSelected())
-                    figureStorage.remove();
-            pictureBox1.Invalidate();
-        }
-    }
+
     private void btCircle_Click(object sender, EventArgs e) {
         removeSelected();
         chSticky.Checked = false;
@@ -220,13 +213,16 @@ public partial class Form1 : Form {
         tree.updateTreeview(new object(), new EventArgs());
     }
     private void btSave_Click(object sender, EventArgs e) {
-        //figureStorage.save();
         if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             figureStorage.save(saveFileDialog1.FileName);
     }
     private void btLoad_Click(object sender, EventArgs e) {
         if (openFileDialog1.ShowDialog() == DialogResult.OK) {
-            //figureStorage.removeObserver(observer);
+            for (figureStorage.first(); !figureStorage.eol(); figureStorage.next()) {
+                figureStorage.getIterator().removeObservers();
+                figureStorage.getIterator().removeAllObserveringFigures();
+            }
+
             figureStorage = figureFactory.load(openFileDialog1.FileName);
             tree = new Tree(figureStorage, treeView1);
             observer.observer = new MouseEventHandler(tree.updateTreeview);
@@ -274,9 +270,6 @@ public partial class Form1 : Form {
         tree.tree_select(treeView1.SelectedNode);
         tree.updateTreeview(sender, e);
     }
-
-    private void Form1_Load(object sender, EventArgs e) {
-    }
     private void saveFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e) {
 
     }
@@ -287,7 +280,26 @@ public partial class Form1 : Form {
 
     private void chSticky_Click(object sender, EventArgs e) {
         for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
-            if (figureStorage.getIterator().getSelected())
+            if (figureStorage.getIterator().getSelected()) {
                 figureStorage.getIterator().setSticky(chSticky.Checked);
+                if (!chSticky.Checked) {
+                    figureStorage.getIterator().removeObservers();
+                    figureStorage.getIterator().removeAllObserveringFigures();
+                }
+            }
+    }
+
+    private void treeView1_KeyDown(object sender, KeyEventArgs e) {
+        if (e.KeyCode == Keys.Delete) {
+            for (figureStorage.first(); !figureStorage.eol(); figureStorage.next())
+                if (figureStorage.getIterator().getSelected()) {
+                    figureStorage.getIterator().removeAllObserveringFigures();
+                    figureStorage.getIterator().removeObservers();
+                    figureStorage.remove();
+                }
+            pictureBox1.Invalidate();
+
+            tree.updateTreeview(sender, e);
+        }
     }
 }
